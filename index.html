@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+
+<h3>かんたんチャット</h3>
+
+<div id="login">
+  名前：<input id="name"><br>
+  合言葉：<input id="pass" type="password"><br>
+  <button onclick="start()">入室</button>
+</div>
+
+<div id="chat" style="display:none;">
+  <ul id="list"></ul>
+  <input id="msg" placeholder="メッセージ">
+  <button onclick="send()">送信</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const SUPABASE_URL = "https://ourisalosxnsseitdbpi.supabase.co";
+const SUPABASE_KEY = "sb_publishable_VkLEnyBokYcxNVZhV7yGOg_wAzfphrq";
+
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let name = "";
+
+async function start(){
+  const pass = document.getElementById("pass").value;
+  name = document.getElementById("name").value;
+
+  if(pass !== "1234"){
+    alert("合言葉が違います");
+    return;
+  }
+
+  document.getElementById("login").style.display = "none";
+  document.getElementById("chat").style.display = "block";
+
+  loadMessages();
+}
+
+async function loadMessages(){
+  const { data } = await client
+    .from("messages")
+    .select("*")
+    .order("time", { ascending: true });
+
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  data.forEach(d => {
+    const li = document.createElement("li");
+    li.textContent = d.name + "： " + d.text;
+    list.appendChild(li);
+  });
+}
+
+async function send(){
+  const text = document.getElementById("msg").value;
+
+  await client.from("messages").insert([
+    {
+      name: name,
+      text: text,
+      time: Date.now()
+    }
+  ]);
+
+  document.getElementById("msg").value = "";
+
+  loadMessages();
+}
+</script>
+
+</body>
+</html>
