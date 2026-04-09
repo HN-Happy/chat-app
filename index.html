@@ -11,7 +11,11 @@
 <body>
 
 <h3>チャット</h3>
-<button onclick="logout()">ログアウト</button>
+
+<!-- 🔥 ログイン中だけ表示 -->
+<button id="logoutBtn" onclick="logout()" style="display:none;">
+  ログアウト
+</button>
 
 <div id="login">
   名前：<input id="name"><br>
@@ -42,8 +46,7 @@ window.onload = () => {
   const savedName = localStorage.getItem("chat_name");
   if(savedName){
     name = savedName;
-    document.getElementById("login").style.display = "none";
-    document.getElementById("chat").style.display = "block";
+    showChat();
     loadMessages();
   }
 };
@@ -59,10 +62,15 @@ async function start(){
 
   localStorage.setItem("chat_name", name);
 
+  showChat();
+  loadMessages();
+}
+
+// 🔥 ログイン状態にする
+function showChat(){
   document.getElementById("login").style.display = "none";
   document.getElementById("chat").style.display = "block";
-
-  loadMessages();
+  document.getElementById("logoutBtn").style.display = "inline";
 }
 
 // 🔥 ログアウト
@@ -71,13 +79,13 @@ function logout(){
 
   document.getElementById("chat").style.display = "none";
   document.getElementById("login").style.display = "block";
+  document.getElementById("logoutBtn").style.display = "none";
 }
 
 async function loadMessages(){
   const now = Date.now();
   const dayAgo = now - (24 * 60 * 60 * 1000);
 
-  // 古いメッセージ削除
   await client.from("messages").delete().lt("time", dayAgo);
 
   const { data } = await client
