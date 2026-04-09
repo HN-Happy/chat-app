@@ -20,8 +20,10 @@
 
 <div id="chat" style="display:none;">
   <ul id="list"></ul>
+
   <input id="msg" placeholder="メッセージ">
-  <button onclick="send()">送信</button>
+  <button onclick="send()">送信</button><br>
+  <button onclick="loadMessages()">更新</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
@@ -34,7 +36,7 @@ const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let name = "";
 
-// 🔥 ページ読み込み時に自動ログイン
+// 🔥 自動ログイン
 window.onload = () => {
   const savedName = localStorage.getItem("chat_name");
   if(savedName){
@@ -54,7 +56,6 @@ async function start(){
     return;
   }
 
-  // 🔥 名前保存
   localStorage.setItem("chat_name", name);
 
   document.getElementById("login").style.display = "none";
@@ -67,7 +68,7 @@ async function loadMessages(){
   const now = Date.now();
   const dayAgo = now - (24 * 60 * 60 * 1000);
 
-  // 🔥 古いメッセージ削除
+  // 古いデータ削除
   await client.from("messages").delete().lt("time", dayAgo);
 
   const { data } = await client
