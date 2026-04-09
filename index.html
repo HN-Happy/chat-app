@@ -6,23 +6,16 @@
     body { font-family: sans-serif; }
     li { margin-bottom: 8px; }
     .time { color: gray; font-size: 10px; margin-left: 8px; }
-    .top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
   </style>
 </head>
 <body>
 
-<div class="top">
-  <h3>チャット</h3>
-  <button onclick="logout()">ログアウト</button>
-</div>
+<h3>かんたんチャット</h3>
+<button onclick="logout()">ログアウト</button>
 
 <div id="login">
   名前：<input id="name"><br>
-  パスワード：<input id="pass" type="password"><br>
+  合言葉：<input id="pass" type="password"><br>
   <button onclick="start()">入室</button>
 </div>
 
@@ -60,7 +53,7 @@ async function start(){
   name = document.getElementById("name").value;
 
   if(pass !== "0830"){
-    alert("パスワードが違います");
+    alert("合言葉が違います");
     return;
   }
 
@@ -72,7 +65,7 @@ async function start(){
   loadMessages();
 }
 
-// 🔥 ログアウト処理
+// 🔥 ログアウト
 function logout(){
   localStorage.removeItem("chat_name");
 
