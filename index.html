@@ -6,11 +6,19 @@
     body { font-family: sans-serif; }
     li { margin-bottom: 8px; }
     .time { color: gray; font-size: 10px; margin-left: 8px; }
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
   </style>
 </head>
 <body>
 
-<h3>チャット</h3>
+<div class="top">
+  <h3>チャット</h3>
+  <button onclick="logout()">ログアウト</button>
+</div>
 
 <div id="login">
   名前：<input id="name"><br>
@@ -64,11 +72,19 @@ async function start(){
   loadMessages();
 }
 
+// 🔥 ログアウト処理
+function logout(){
+  localStorage.removeItem("chat_name");
+
+  document.getElementById("chat").style.display = "none";
+  document.getElementById("login").style.display = "block";
+}
+
 async function loadMessages(){
   const now = Date.now();
   const dayAgo = now - (24 * 60 * 60 * 1000);
 
-  // 古いデータ削除
+  // 古いメッセージ削除
   await client.from("messages").delete().lt("time", dayAgo);
 
   const { data } = await client
